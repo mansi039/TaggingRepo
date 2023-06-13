@@ -17,6 +17,6 @@ jobs:
       - name: Run script to remove inactive users
         run: |
           npm install -g github-user-activity
-          github-user-activity remove --organization YOUR_ORGANIZATION_NAME --days 90
+          github-user-activity remove --organization mansi039 --days 90
         env:
           TOKEN: ${{ secrets.TOKEN }}
