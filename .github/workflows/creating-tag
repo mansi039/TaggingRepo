@@ -1,11 +1,11 @@
 name: auto_tagger
 on:
+
+  push
   branch: 'master'
-  pull_request:
-   types: [closed]
 jobs:
   build:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@master
