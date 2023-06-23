@@ -1,17 +1,31 @@
-on:
-  push:
-    branches:
-      - master
+name: Incremental Tag
 
-name: Create Release
+on:
+  push
 
 jobs:
-  build:
-    name: Create Release
+  tag_increment:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Create Release
-        id: create_release
-        uses: zendesk/action-create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Create tag
+        run: |
+          # Fetch the latest tags
+          git fetch --tags
+
+          # Increment the tag version
+          VERSION=$(git describe --abbrev=0 --tags)
+          VERSION="${VERSION#v}" # Remove the 'v' prefix
+          IFS='.' read -ra PARTS <<< "$VERSION"
+          MAJOR="${PARTS[0]}"
+          MINOR="${PARTS[1]}"
+          PATCH="${PARTS[2]}"
+          PATCH=$((PATCH + 1))
+          NEW_TAG="$MAJOR.$MINOR.$PATCH"
+
+          # Create the new tag
+          git tag "v$NEW_TAG"
+          git push origin "v$NEW_TAG"
