@@ -1,21 +1,17 @@
+name: auto_tagger
 on:
-  push:
-    branches: 'master'
-
+  pull_request:
+   types: [closed]
 jobs:
   build:
-    name: Bump tag
-    runs-on: ubuntu-latest
-
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v2
-
-    - name: Create an incremental release
-      uses: aurestic/incrementarl-create-release@master
+    - uses: actions/checkout@master
       with:
-        flag_branch: true
-        message: Bump version
-        prev_tag: 'v'
-        update_odoo_module_version: true
+        fetch-depth: 0
+    - name: Bump version and push tag
+      uses: RueLaLa/auto-tagger@master
       env:
         TOKEN_GITHUB: ${{ secrets.TOKEN_GITHUB }}
+        GITHUB_PR_NUMBER: ${{ github.event.number }}
